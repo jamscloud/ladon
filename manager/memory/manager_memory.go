@@ -25,8 +25,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	. "github.com/smw-104/ladon"
 	"github.com/ory/pagination"
+	. "github.com/smw-104/ladon"
 	"sort"
 )
 
@@ -128,7 +128,7 @@ func (m *MemoryManager) FindRequestCandidates(r *Request) (Policies, error) {
 // FindPoliciesForSubject returns policies that could match the subject. It either returns
 // a set of policies that applies to the subject, or a superset of it.
 // If an error occurs, it returns nil and the error.
-func (m *MemoryManager) FindPoliciesForSubject(subject string) (Policies, error) {
+func (m *MemoryManager) FindPoliciesForSubject(subject string, limit int64, offset int64) (Policies, error) {
 	return m.findAllPolicies()
 }
 
