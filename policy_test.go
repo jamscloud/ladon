@@ -21,13 +21,12 @@
 package ladon_test
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
+	"github.com/smw-104/ladon"
 	. "github.com/smw-104/ladon"
 )
 
@@ -60,59 +59,29 @@ func TestHasAccess(t *testing.T) {
 	assert.False(t, policyCases[1].AllowAccess())
 }
 
-func TestMarshalling(t *testing.T) {
-	for k, c := range policyCases {
-		t.Run(fmt.Sprintf("case=%d", k), func(t *testing.T) {
-			var cc = DefaultPolicy{
-				Conditions: make(Conditions),
-			}
-			data, err := json.Marshal(c)
-			RequireError(t, false, err)
-
-			json.Unmarshal(data, &cc)
-			RequireError(t, false, err)
-			assert.Equal(t, c, &cc)
-		})
+func TestDefaultPolicy(t *testing.T) {
+	policy := &DefaultPolicy{
+		ID:          "id",
+		Description: "desc",
+		Subjects:    []string{"subjects"},
+		Effect:      "effect",
+		Resources:   []string{"resources"},
+		Actions:     []string{"actions"},
+		Conditions:  ladon.Conditions{"key": &ladon.StringEqualCondition{Equals: "value"}},
+		Meta:        []byte("meta"),
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{},
 	}
-}
 
-func TestMetaUnmarshalling(t *testing.T) {
-	var m = TestMeta{
-		Key: "test",
-	}
-	var mm TestMeta
-	var p = DefaultPolicy{}
-
-	data, err := json.Marshal(&m)
-	RequireError(t, false, err)
-
-	p.Meta = data
-
-	err = p.UnmarshalMeta(&mm)
-	RequireError(t, false, err)
-
-	assert.Equal(t, &m, &mm)
-}
-
-func TestGetters(t *testing.T) {
-	for _, c := range policyCases {
-		assert.Equal(t, c.ID, c.GetID())
-		assert.Equal(t, c.Description, c.GetDescription())
-		assert.Equal(t, c.Resources, c.GetResources())
-		assert.Equal(t, c.Subjects, c.GetSubjects())
-		assert.Equal(t, len(c.Conditions), len(c.GetConditions()))
-		assert.Equal(t, c.Effect, c.GetEffect())
-		assert.Equal(t, c.Actions, c.GetActions())
-		assert.Equal(t, byte('<'), c.GetStartDelimiter())
-		assert.Equal(t, byte('>'), c.GetEndDelimiter())
-	}
-}
-
-func RequireError(t *testing.T, expectError bool, err error, args ...interface{}) {
-	if err != nil && !expectError {
-		t.Logf("Unexpected error: %s\n", err.Error())
-		t.Logf("Arguments: %v\n", args)
-		t.Logf("\n\n")
-	}
-	require.Equal(t, expectError, err != nil)
+	assert.Equal(t, "id", policy.GetID(), "ID not equal")
+	assert.Equal(t, "desc", policy.GetDescription(), "Description not equal")
+	assert.Equal(t, []string{"subjects"}, policy.GetSubjects(), "Subject not equal")
+	assert.Equal(t, "effect", policy.GetEffect(), "Effect not equal")
+	assert.Equal(t, []string{"resources"}, policy.GetResources(), "Resources not equal")
+	assert.Equal(t, []string{"actions"}, policy.GetActions(), "Actions not equal")
+	assert.Equal(t, []byte("meta"), policy.GetMeta(), "Meta not equal")
+	assert.Equal(t, time.Time{}, policy.CreatedAt, "CreatedAt not equal")
+	assert.Equal(t, time.Time{}, policy.UpdatedAt, "UpdatedAt not equal")
+	assert.Equal(t, ladon.Conditions{"key": &ladon.StringEqualCondition{Equals: "value"}},
+		policy.Conditions, "Conditions not equal")
 }

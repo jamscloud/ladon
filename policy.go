@@ -21,9 +21,7 @@
 package ladon
 
 import (
-	"encoding/json"
-
-	"github.com/pkg/errors"
+	"time"
 )
 
 // Policies is an array of policies.
@@ -63,112 +61,89 @@ type Policy interface {
 
 	// GetEndDelimiter returns the delimiter which identifies the end of a regular expression.
 	GetEndDelimiter() byte
+
+	// Retrieves CreatedAt timestamp.
+	GetCreatedAt() time.Time
+
+	// Retrieves UpdatedAt timestamp.
+	GetUpdatedAt() time.Time
 }
 
-// DefaultPolicy is the default implementation of the policy interface.
+// The AccessHawk default policy implementation.
 type DefaultPolicy struct {
-	ID          string     `json:"id" gorethink:"id"`
-	Description string     `json:"description" gorethink:"description"`
-	Subjects    []string   `json:"subjects" gorethink:"subjects"`
-	Effect      string     `json:"effect" gorethink:"effect"`
-	Resources   []string   `json:"resources" gorethink:"resources"`
-	Actions     []string   `json:"actions" gorethink:"actions"`
-	Conditions  Conditions `json:"conditions" gorethink:"conditions"`
-	Meta        []byte     `json:"meta" gorethink:"meta"`
-}
-
-// UnmarshalJSON overwrite own policy with values of the given in policy in JSON format
-func (p *DefaultPolicy) UnmarshalJSON(data []byte) error {
-	var pol = struct {
-		ID          string     `json:"id" gorethink:"id"`
-		Description string     `json:"description" gorethink:"description"`
-		Subjects    []string   `json:"subjects" gorethink:"subjects"`
-		Effect      string     `json:"effect" gorethink:"effect"`
-		Resources   []string   `json:"resources" gorethink:"resources"`
-		Actions     []string   `json:"actions" gorethink:"actions"`
-		Conditions  Conditions `json:"conditions" gorethink:"conditions"`
-		Meta        []byte     `json:"meta" gorethink:"meta"`
-	}{
-		Conditions: Conditions{},
-	}
-
-	if err := json.Unmarshal(data, &pol); err != nil {
-		return errors.WithStack(err)
-	}
-
-	*p = *&DefaultPolicy{
-		ID:          pol.ID,
-		Description: pol.Description,
-		Subjects:    pol.Subjects,
-		Effect:      pol.Effect,
-		Resources:   pol.Resources,
-		Actions:     pol.Actions,
-		Conditions:  pol.Conditions,
-		Meta:        pol.Meta,
-	}
-	return nil
-}
-
-// UnmarshalMeta parses the policies []byte encoded metadata and stores the result in the value pointed to by v.
-func (p *DefaultPolicy) UnmarshalMeta(v interface{}) error {
-	if err := json.Unmarshal(p.Meta, &v); err != nil {
-		return errors.WithStack(err)
-	}
-
-	return nil
+	ID          string     `json:"id" dynamo:"id,hash"`
+	Description string     `json:"description,omitempty" dynamo:"description,omitempty"`
+	Subjects    []string   `json:"subjects" dynamo:"subjects"`
+	Effect      string     `json:"effect" dynamo:"effect"`
+	Resources   []string   `json:"resources" dynamo:"resources"`
+	Actions     []string   `json:"actions" dynamo:"actions"`
+	Conditions  Conditions `json:"conditions,omitempty" dynamo:"conditions,omitempty"`
+	Meta        []byte     `json:"meta,omitempty" dynamo:"conditions,omitempty"`
+	CreatedAt   time.Time  `json:"created_at" dynamo:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at" dynamo:"updated_at"`
 }
 
 // GetID returns the policies id.
-func (p *DefaultPolicy) GetID() string {
-	return p.ID
+func (policy *DefaultPolicy) GetID() string {
+	return policy.ID
 }
 
 // GetDescription returns the policies description.
-func (p *DefaultPolicy) GetDescription() string {
-	return p.Description
+func (policy *DefaultPolicy) GetDescription() string {
+	return policy.Description
 }
 
 // GetSubjects returns the policies subjects.
-func (p *DefaultPolicy) GetSubjects() []string {
-	return p.Subjects
+func (policy *DefaultPolicy) GetSubjects() []string {
+	return policy.Subjects
 }
 
 // AllowAccess returns true if the policy effect is allow, otherwise false.
-func (p *DefaultPolicy) AllowAccess() bool {
-	return p.Effect == AllowAccess
+func (policy *DefaultPolicy) AllowAccess() bool {
+	return policy.Effect == AllowAccess
 }
 
 // GetEffect returns the policies effect which might be 'allow' or 'deny'.
-func (p *DefaultPolicy) GetEffect() string {
-	return p.Effect
+func (policy *DefaultPolicy) GetEffect() string {
+	return policy.Effect
 }
 
 // GetResources returns the policies resources.
-func (p *DefaultPolicy) GetResources() []string {
-	return p.Resources
+func (policy *DefaultPolicy) GetResources() []string {
+	return policy.Resources
 }
 
 // GetActions returns the policies actions.
-func (p *DefaultPolicy) GetActions() []string {
-	return p.Actions
+func (policy *DefaultPolicy) GetActions() []string {
+	return policy.Actions
 }
 
 // GetConditions returns the policies conditions.
-func (p *DefaultPolicy) GetConditions() Conditions {
-	return p.Conditions
+func (policy *DefaultPolicy) GetConditions() Conditions {
+	return policy.Conditions
 }
 
 // GetMeta returns the policies arbitrary metadata set by the user.
-func (p *DefaultPolicy) GetMeta() []byte {
-	return p.Meta
+func (policy *DefaultPolicy) GetMeta() []byte {
+	return policy.Meta
+}
+
+// Get the CreatedAt timestamp.
+func (policy *DefaultPolicy) GetCreatedAt() time.Time {
+	return policy.CreatedAt
+}
+
+// Get the UpdatedAt timestamp.
+func (policy *DefaultPolicy) GetUpdatedAt() time.Time {
+	return policy.CreatedAt
 }
 
 // GetEndDelimiter returns the delimiter which identifies the end of a regular expression.
-func (p *DefaultPolicy) GetEndDelimiter() byte {
+func (policy *DefaultPolicy) GetEndDelimiter() byte {
 	return '>'
 }
 
 // GetStartDelimiter returns the delimiter which identifies the beginning of a regular expression.
-func (p *DefaultPolicy) GetStartDelimiter() byte {
+func (policy *DefaultPolicy) GetStartDelimiter() byte {
 	return '<'
 }
