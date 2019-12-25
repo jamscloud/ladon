@@ -25,7 +25,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	. "github.com/ory/ladon"
+	. "github.com/smw-104/ladon"
 	"github.com/ory/pagination"
 	"sort"
 )

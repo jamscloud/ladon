@@ -5,7 +5,7 @@ env:
 
 language: go
 
-go_import_path: github.com/ory/ladon
+go_import_path: github.com/smw-104/ladon
 
 go:
   - 1.11

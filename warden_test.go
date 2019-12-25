@@ -28,7 +28,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 
-	. "github.com/ory/ladon"
+	. "github.com/smw-104/ladon"
 )
 
 func TestWardenIsGranted(t *testing.T) {
