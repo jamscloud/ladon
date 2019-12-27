@@ -81,7 +81,7 @@ func (_mr *_MockManagerRecorder) FindRequestCandidates(arg0 interface{}) *gomock
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "FindRequestCandidates", arg0)
 }
 
-func (_m *MockManager) FindPoliciesForSubject(_param0 string, _param1 int64, _param2 int64) (ladon.Policies, error) {
+func (_m *MockManager) FindPoliciesForSubject(_param0 string, _param1 int, _param2 int) (ladon.Policies, error) {
 	ret := _m.ctrl.Call(_m, "FindPoliciesForSubject", _param0, _param1, _param2)
 	ret0, _ := ret[0].(ladon.Policies)
 	ret1, _ := ret[1].(error)
@@ -114,7 +114,7 @@ func (_mr *_MockManagerRecorder) Get(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Get", arg0)
 }
 
-func (_m *MockManager) GetAll(_param0 int64, _param1 int64) (ladon.Policies, error) {
+func (_m *MockManager) GetAll(_param0 int, _param1 int) (ladon.Policies, error) {
 	ret := _m.ctrl.Call(_m, "GetAll", _param0, _param1)
 	ret0, _ := ret[0].(ladon.Policies)
 	ret1, _ := ret[1].(error)

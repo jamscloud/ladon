@@ -413,7 +413,7 @@ func TestHelperCreateGetDelete(s Manager) func(t *testing.T) {
 		}
 
 		t.Run("type=query-all", func(t *testing.T) {
-			count := int64(len(TestManagerPolicies))
+			count := int(len(TestManagerPolicies))
 
 			pols, err := s.GetAll(100, 0)
 			require.NoError(t, err)

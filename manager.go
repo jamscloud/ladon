@@ -36,7 +36,7 @@ type Manager interface {
 	Delete(id string) error
 
 	// GetAll retrieves all policies.
-	GetAll(limit, offset int64) (Policies, error)
+	GetAll(limit, offset int) (Policies, error)
 
 	// FindRequestCandidates returns candidates that could match the request object. It either returns
 	// a set that exactly matches the request, or a superset of it. If an error occurs, it returns nil and
@@ -44,7 +44,7 @@ type Manager interface {
 	FindRequestCandidates(r *Request) (Policies, error)
 
 	// FindPoliciesForSubject returns policies that could match the subject in a paginated fashion.
-	FindPoliciesForSubject(subject string, limit, offset int64) (Policies, error)
+	FindPoliciesForSubject(subject string, limit int, offset int) (Policies, error)
 
 	// FindPoliciesForResource returns policies that could match the resource. It either returns
 	// a set of policies that apply to the resource, or a superset of it.
