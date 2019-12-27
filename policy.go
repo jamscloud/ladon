@@ -67,6 +67,12 @@ type Policy interface {
 
 	// Retrieves UpdatedAt timestamp.
 	GetUpdatedAt() time.Time
+
+	// Sets CreatedAt timestamp.
+	SetCreatedAt(time.Time)
+
+	// Sets UpdatedAt timestamp.
+	SetUpdatedAt(time.Time)
 }
 
 // The AccessHawk default policy implementation.
@@ -146,4 +152,14 @@ func (policy *DefaultPolicy) GetEndDelimiter() byte {
 // GetStartDelimiter returns the delimiter which identifies the beginning of a regular expression.
 func (policy *DefaultPolicy) GetStartDelimiter() byte {
 	return '<'
+}
+
+// Set the CreatedAt timestamp.
+func (policy *DefaultPolicy) SetCreatedAt(createdAt time.Time) {
+	policy.CreatedAt = createdAt
+}
+
+// Set the UpdatedAt timestamp.
+func (policy *DefaultPolicy) SetUpdatedAt(updatedAt time.Time) {
+	policy.UpdatedAt = updatedAt
 }
