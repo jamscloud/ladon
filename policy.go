@@ -141,7 +141,7 @@ func (policy *DefaultPolicy) GetCreatedAt() time.Time {
 
 // Get the UpdatedAt timestamp.
 func (policy *DefaultPolicy) GetUpdatedAt() time.Time {
-	return policy.CreatedAt
+	return policy.UpdatedAt
 }
 
 // GetEndDelimiter returns the delimiter which identifies the end of a regular expression.
