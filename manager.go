@@ -22,6 +22,8 @@ package ladon
 
 // Manager is responsible for managing and persisting policies.
 type Manager interface {
+	// Initialize the manager.
+	Initialize() error
 
 	// Create persists the policy.
 	Create(policy Policy) error

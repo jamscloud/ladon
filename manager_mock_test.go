@@ -50,6 +50,10 @@ func (_m *MockManager) EXPECT() *_MockManagerRecorder {
 	return _m.recorder
 }
 
+func (_m *MockManager) Initialize() error {
+	return nil
+}
+
 func (_m *MockManager) Create(_param0 ladon.Policy) error {
 	ret := _m.ctrl.Call(_m, "Create", _param0)
 	ret0, _ := ret[0].(error)

@@ -43,6 +43,11 @@ func NewMemoryManager() *MemoryManager {
 	}
 }
 
+// Initialize the manager.
+func (m *MemoryManager) Initialize() error {
+	return nil
+}
+
 // Update updates an existing policy.
 func (m *MemoryManager) Update(policy Policy) error {
 	m.Lock()
