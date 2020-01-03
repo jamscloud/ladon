@@ -25,6 +25,9 @@ type Manager interface {
 	// Initialize the manager.
 	Initialize() error
 
+	// Determine if the manager is initialized.
+	IsInitialized() bool
+
 	// Create persists the policy.
 	Create(policy Policy) error
 

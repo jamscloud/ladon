@@ -48,6 +48,11 @@ func (m *MemoryManager) Initialize() error {
 	return nil
 }
 
+// Determine if the manager is initialized.
+func (m *MemoryManager) IsInitialized() bool {
+	return true
+}
+
 // Update updates an existing policy.
 func (m *MemoryManager) Update(policy Policy) error {
 	m.Lock()
