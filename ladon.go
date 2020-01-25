@@ -61,18 +61,32 @@ func (l *Ladon) IsAllowed(r *Request) (err error) {
 // DoPoliciesAllow returns nil if subject s has permission p on resource r with context c for a given policy list or an error otherwise.
 // The IsAllowed interface should be preferred since it uses the manager directly. This is a lower level interface for when you don't want to use the ladon manager.
 func (l *Ladon) DoPoliciesAllow(r *Request, policies []Policy) (err error) {
-	var allowed = false
 	var deciders = Policies{}
+
+	if len(policies) == 0 || len(r.Actions) == 0 {
+		l.auditLogger().LogRejectedAccessRequest(r, policies, deciders)
+		return errors.WithStack(ErrRequestDenied)
+	}
+
+	actionAllowalStatus := make([]bool, len(r.Actions))
 
 	// Iterate through all policies
 	for _, p := range policies {
 		// Does the action match with one of the policies?
 		// This is the first check because usually actions are a superset of get|update|delete|set
 		// and thus match faster.
-		if pm, err := l.matcher().Matches(p, p.GetActions(), r.Action); err != nil {
-			return errors.WithStack(err)
-		} else if !pm {
-			// no, continue to next policy
+
+		policyMatchingActions := make([]bool, len(r.Actions))
+		doesAtLeastOneActionMatch := false
+		for index, a := range r.Actions {
+			if pm, err := l.matcher().Matches(p, p.GetActions(), a); err != nil {
+				return errors.WithStack(err)
+			} else if pm {
+				policyMatchingActions[index] = true
+				doesAtLeastOneActionMatch = true
+			}
+		}
+		if !doesAtLeastOneActionMatch {
 			continue
 		}
 
@@ -108,13 +122,20 @@ func (l *Ladon) DoPoliciesAllow(r *Request, policies []Policy) (err error) {
 			return errors.WithStack(ErrRequestForcefullyDenied)
 		}
 
-		allowed = true
 		deciders = append(deciders, p)
+
+		for index, a := range policyMatchingActions {
+			if a {
+				actionAllowalStatus[index] = true
+			}
+		}
 	}
 
-	if !allowed {
-		l.auditLogger().LogRejectedAccessRequest(r, policies, deciders)
-		return errors.WithStack(ErrRequestDenied)
+	for _, a := range actionAllowalStatus {
+		if !a {
+			l.auditLogger().LogRejectedAccessRequest(r, policies, deciders)
+			return errors.WithStack(ErrRequestDenied)
+		}
 	}
 
 	l.auditLogger().LogGrantedAccessRequest(r, policies, deciders)

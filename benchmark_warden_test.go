@@ -61,7 +61,7 @@ func benchmarkLadon(i int, b *testing.B, warden *ladon.Ladon) {
 	for n := 0; n < b.N; n++ {
 		if err = warden.IsAllowed(&ladon.Request{
 			Subject:  "5",
-			Action:   "bar",
+			Actions:  []string{"bar"},
 			Resource: "baz",
 		}); errors.Cause(err) == ladon.ErrRequestDenied || errors.Cause(err) == ladon.ErrRequestForcefullyDenied || err == nil {
 		} else {

@@ -266,7 +266,7 @@ func TestHelperFindPoliciesForSubject(k string, s Manager) func(t *testing.T) {
 		res, err := s.FindRequestCandidates(&Request{
 			Subject:  "sqlmatch",
 			Resource: "article",
-			Action:   "create",
+			Actions:  []string{"create"},
 		})
 		require.NoError(t, err)
 		require.Len(t, res, 2)
@@ -282,7 +282,7 @@ func TestHelperFindPoliciesForSubject(k string, s Manager) func(t *testing.T) {
 		res, err = s.FindRequestCandidates(&Request{
 			Subject:  "sqlamatch",
 			Resource: "article",
-			Action:   "create",
+			Actions:  []string{"create"},
 		})
 
 		require.NoError(t, err)

@@ -633,7 +633,7 @@ func main() {
 
     err := warden.IsAllowed(&ladon.Request{
         Subject: "peter",
-        Action: "delete",
+        Actions: []string{"delete"},
         Resource: "myrn:some.domain.com:resource:123",
         Context: ladon.Context{
             "ip": "127.0.0.1",

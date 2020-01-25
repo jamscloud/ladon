@@ -72,6 +72,34 @@ var pols = []Policy{
 		Resources:   []string{"<.*>"},
 		Effect:      DenyAccess,
 	},
+	&DefaultPolicy{
+		ID:        "4",
+		Subjects:  []string{"max"},
+		Actions:   []string{"action1", "action2", "action3"},
+		Resources: []string{"resource"},
+		Effect:    AllowAccess,
+	},
+	&DefaultPolicy{
+		ID:        "5",
+		Subjects:  []string{"max"},
+		Actions:   []string{"action2", "action4", "action5"},
+		Resources: []string{"resource"},
+		Effect:    DenyAccess,
+	},
+	&DefaultPolicy{
+		ID:        "6",
+		Subjects:  []string{"max"},
+		Actions:   []string{"action6", "action7", "action8"},
+		Resources: []string{"resource"},
+		Effect:    AllowAccess,
+	},
+	&DefaultPolicy{
+		ID:        "7",
+		Subjects:  []string{"max"},
+		Actions:   []string{"action9", "action10", "action11"},
+		Resources: []string{"resource"},
+		Effect:    DenyAccess,
+	},
 }
 
 // Some test cases
@@ -84,7 +112,7 @@ var cases = []struct {
 		description: "should fail because no policy is matching as field clientIP does not satisfy the CIDR condition of policy 1.",
 		accessRequest: &Request{
 			Subject:  "peter",
-			Action:   "delete",
+			Actions:  []string{"delete"},
 			Resource: "myrn:some.domain.com:resource:123",
 			Context: Context{
 				"owner":    "peter",
@@ -97,7 +125,7 @@ var cases = []struct {
 		description: "should fail because no policy is matching as the owner of the resource 123 is zac, not peter!",
 		accessRequest: &Request{
 			Subject:  "peter",
-			Action:   "delete",
+			Actions:  []string{"delete"},
 			Resource: "myrn:some.domain.com:resource:123",
 			Context: Context{
 				"owner":    "zac",
@@ -110,7 +138,7 @@ var cases = []struct {
 		description: "should pass because policy 1 is matching and has effect allow.",
 		accessRequest: &Request{
 			Subject:  "peter",
-			Action:   "delete",
+			Actions:  []string{"delete"},
 			Resource: "myrn:some.domain.com:resource:123",
 			Context: Context{
 				"owner":    "peter",
@@ -123,7 +151,7 @@ var cases = []struct {
 		description: "should pass because max is allowed to update all resources.",
 		accessRequest: &Request{
 			Subject:  "max",
-			Action:   "update",
+			Actions:  []string{"update"},
 			Resource: "myrn:some.domain.com:resource:123",
 		},
 		expectErr: false,
@@ -132,7 +160,7 @@ var cases = []struct {
 		description: "should pass because max is allowed to update all resource, even if none is given.",
 		accessRequest: &Request{
 			Subject:  "max",
-			Action:   "update",
+			Actions:  []string{"update"},
 			Resource: "",
 		},
 		expectErr: false,
@@ -141,7 +169,7 @@ var cases = []struct {
 		description: "should fail because max is not allowed to broadcast any resource.",
 		accessRequest: &Request{
 			Subject:  "max",
-			Action:   "broadcast",
+			Actions:  []string{"broadcast"},
 			Resource: "myrn:some.domain.com:resource:123",
 		},
 		expectErr: true,
@@ -150,13 +178,102 @@ var cases = []struct {
 		description: "should fail because max is not allowed to broadcast any resource, even empty ones!",
 		accessRequest: &Request{
 			Subject: "max",
-			Action:  "broadcast",
+			Actions: []string{"broadcast"},
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action2", "action3"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action1", "action3"},
+			Resource: "resource",
+		},
+		expectErr: false,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action3"},
+			Resource: "resource",
+		},
+		expectErr: false,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action2"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action1", "action7", "action9"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action1", "action7"},
+			Resource: "resource",
+		},
+		expectErr: false,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action4", "action10"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action1", "actionnonexistent"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action4", "actionnonexistent"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"actionnonexistent", "actionnonexistent2"},
+			Resource: "resource",
+		},
+		expectErr: true,
+	},
+	{
+		accessRequest: &Request{
+			Subject:  "max",
+			Actions:  []string{"action1", "action7", "actionnonexistent"},
+			Resource: "resource",
 		},
 		expectErr: true,
 	},
 }
 
 func TestLadon(t *testing.T) {
+
 	// Instantiate ladon with the default in-memory store.
 	warden := &Ladon{Manager: NewMemoryManager()}
 
@@ -183,7 +300,6 @@ func TestLadon(t *testing.T) {
 			assert.Equal(t, c.expectErr, err != nil)
 		})
 	}
-
 }
 
 func TestLadonEmpty(t *testing.T) {

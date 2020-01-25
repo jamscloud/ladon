@@ -26,7 +26,7 @@ type Request struct {
 	Resource string `json:"resource"`
 
 	// Action is the action that is requested on the resource.
-	Action string `json:"action"`
+	Actions []string `json:"actions"`
 
 	// Subejct is the subject that is requesting access.
 	Subject string `json:"subject"`

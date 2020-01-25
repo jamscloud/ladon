@@ -70,7 +70,7 @@ func TestAuditLogger(t *testing.T) {
 	output.Reset()
 
 	r = &Request{
-		Action: "update",
+		Actions: []string{"update"},
 	}
 	assert.NotNil(t, warden.IsAllowed(r))
 	assert.Equal(t, "policy no-updates forcefully denied the access\n", output.String())
@@ -79,7 +79,7 @@ func TestAuditLogger(t *testing.T) {
 
 	r = &Request{
 		Subject: "bob",
-		Action:  "delete",
+		Actions: []string{"delete"},
 	}
 	assert.NotNil(t, warden.IsAllowed(r))
 	assert.Equal(t, "policies yes-deletes allow access, but policy no-bob forcefully denied it\n", output.String())
@@ -88,7 +88,7 @@ func TestAuditLogger(t *testing.T) {
 
 	r = &Request{
 		Subject: "alice",
-		Action:  "delete",
+		Actions: []string{"delete"},
 	}
 	assert.Nil(t, warden.IsAllowed(r))
 	assert.Equal(t, "policies yes-deletes allow access\n", output.String())

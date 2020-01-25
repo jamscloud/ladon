@@ -67,13 +67,13 @@ func TestWardenIsGranted(t *testing.T) {
 			r: &Request{
 				Subject:  "peter",
 				Resource: "articles:1234",
-				Action:   "view",
+				Actions:  []string{"view"},
 			},
 			setup: func() {
 				m.EXPECT().FindRequestCandidates(gomock.Eq(&Request{
 					Subject:  "peter",
 					Resource: "articles:1234",
-					Action:   "view",
+					Actions:  []string{"view"},
 				})).Return(Policies{
 					&DefaultPolicy{
 						Subjects:  []string{"<zac|peter>"},
@@ -90,13 +90,13 @@ func TestWardenIsGranted(t *testing.T) {
 			r: &Request{
 				Subject:  "ken",
 				Resource: "articles:1234",
-				Action:   "view",
+				Actions:  []string{"view"},
 			},
 			setup: func() {
 				m.EXPECT().FindRequestCandidates(gomock.Eq(&Request{
 					Subject:  "ken",
 					Resource: "articles:1234",
-					Action:   "view",
+					Actions:  []string{"view"},
 				})).Return(Policies{
 					&DefaultPolicy{
 						Subjects:  []string{"<zac|peter>"},
@@ -113,13 +113,13 @@ func TestWardenIsGranted(t *testing.T) {
 			r: &Request{
 				Subject:  "ken",
 				Resource: "printers:321",
-				Action:   "view",
+				Actions:  []string{"view"},
 			},
 			setup: func() {
 				m.EXPECT().FindRequestCandidates(gomock.Eq(&Request{
 					Subject:  "ken",
 					Resource: "printers:321",
-					Action:   "view",
+					Actions:  []string{"view"},
 				})).Return(Policies{
 					&DefaultPolicy{
 						Subjects:  []string{"ken", "peter"},
@@ -136,13 +136,13 @@ func TestWardenIsGranted(t *testing.T) {
 			r: &Request{
 				Subject:  "ken",
 				Resource: "articles:321",
-				Action:   "view",
+				Actions:  []string{"view"},
 			},
 			setup: func() {
 				m.EXPECT().FindRequestCandidates(gomock.Eq(&Request{
 					Subject:  "ken",
 					Resource: "articles:321",
-					Action:   "view",
+					Actions:  []string{"view"},
 				})).Return(Policies{
 					&DefaultPolicy{
 						Subjects:  []string{"ken", "peter"},
@@ -159,13 +159,13 @@ func TestWardenIsGranted(t *testing.T) {
 			r: &Request{
 				Subject:  "ken",
 				Resource: "articles:321",
-				Action:   "foo",
+				Actions:  []string{"foo"},
 			},
 			setup: func() {
 				m.EXPECT().FindRequestCandidates(gomock.Eq(&Request{
 					Subject:  "ken",
 					Resource: "articles:321",
-					Action:   "foo",
+					Actions:  []string{"foo"},
 				})).Return(Policies{
 					&DefaultPolicy{
 						Subjects:  []string{"ken", "peter"},
