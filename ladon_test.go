@@ -283,7 +283,7 @@ func TestLadon(t *testing.T) {
 	}
 
 	for i := 0; i < len(pols); i++ {
-		polices, err := warden.Manager.GetAll(int(1), int(i))
+		polices, _, err := warden.Manager.GetAll(int(1), int(i))
 		require.NoError(t, err)
 		p, err := warden.Manager.Get(fmt.Sprintf("%d", i))
 		if err == nil {

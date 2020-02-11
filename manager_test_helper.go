@@ -415,19 +415,19 @@ func TestHelperCreateGetDelete(s Manager) func(t *testing.T) {
 		t.Run("type=query-all", func(t *testing.T) {
 			count := int(len(TestManagerPolicies))
 
-			pols, err := s.GetAll(100, 0)
+			pols, _, err := s.GetAll(100, 0)
 			require.NoError(t, err)
 			assert.Len(t, pols, len(TestManagerPolicies))
 
-			pols4, err := s.GetAll(1, 0)
+			pols4, _, err := s.GetAll(1, 0)
 			require.NoError(t, err)
 			assert.Len(t, pols4, 1)
 
-			pols2, err := s.GetAll(100, count-1)
+			pols2, _, err := s.GetAll(100, count-1)
 			require.NoError(t, err)
 			assert.Len(t, pols2, 1)
 
-			pols3, err := s.GetAll(100, count)
+			pols3, _, err := s.GetAll(100, count)
 			require.NoError(t, err)
 			assert.Len(t, pols3, 0)
 

@@ -62,7 +62,7 @@ func (m *MemoryManager) Update(policy Policy) error {
 }
 
 // GetAll returns all policies.
-func (m *MemoryManager) GetAll(limit, offset int) (Policies, error) {
+func (m *MemoryManager) GetAll(limit, offset int) (Policies, int, error) {
 	keys := make([]string, len(m.Policies))
 	i := 0
 	m.RLock()
@@ -80,7 +80,7 @@ func (m *MemoryManager) GetAll(limit, offset int) (Policies, error) {
 		i++
 	}
 	m.RUnlock()
-	return ps, nil
+	return ps, 0, nil
 }
 
 // Create a new pollicy to MemoryManager.
@@ -138,8 +138,9 @@ func (m *MemoryManager) FindRequestCandidates(r *Request) (Policies, error) {
 // FindPoliciesForSubject returns policies that could match the subject. It either returns
 // a set of policies that applies to the subject, or a superset of it.
 // If an error occurs, it returns nil and the error.
-func (m *MemoryManager) FindPoliciesForSubject(subject string, limit int, offset int) (Policies, error) {
-	return m.findAllPolicies()
+func (m *MemoryManager) FindPoliciesForSubject(subject string, limit int, offset int) (Policies, int, error) {
+	policies, err := m.findAllPolicies()
+	return policies, 0, err
 }
 
 // FindPoliciesForResource returns policies that could match the resource. It either returns
