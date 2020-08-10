@@ -1,4 +1,4 @@
-module github.com/smw-104/ladon
+module github.com/jamscloud/ladon
 
 require (
 	github.com/golang/mock v1.1.1
